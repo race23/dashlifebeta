@@ -23,10 +23,25 @@
 }
 html{scroll-behavior:smooth}
 body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',system-ui,sans-serif;font-size:13.5px;line-height:1.55;min-height:100vh}
+body.theme-light{
+  --bg:#f3f5f8; --s1:#ffffff; --s2:#f8f9fc; --s3:#eef1f7; --s4:#e4e8f1; --s5:#dbe1ec;
+  --border:rgba(16,24,40,0.10); --border2:rgba(16,24,40,0.05);
+  --text:#111827; --t2:#334155; --t3:#64748b; --t4:#94a3b8; --t5:#cbd5e1;
+  --gold:#9b7a44; --gold-d:rgba(155,122,68,0.16); --gold-d2:rgba(155,122,68,0.08);
+  --green:#1f9d63; --green-d:rgba(31,157,99,0.16); --green-d2:rgba(31,157,99,0.08);
+  --red:#d94848; --red-d:rgba(217,72,72,0.16); --red-d2:rgba(217,72,72,0.08);
+  --amber:#b7791f; --amber-d:rgba(183,121,31,0.16); --amber-d2:rgba(183,121,31,0.08);
+  --blue:#2563eb; --blue-d:rgba(37,99,235,0.16); --blue-d2:rgba(37,99,235,0.08);
+  --purple:#7c3aed; --purple-d:rgba(124,58,237,0.16); --purple-d2:rgba(124,58,237,0.08);
+  --teal:#0d9488; --teal-d:rgba(13,148,136,0.16);
+  --pink:#db2777; --pink-d:rgba(219,39,119,0.16);
+}
 
 /* ── TOPBAR ── */
 .topbar{background:var(--s1);border-bottom:1px solid var(--border);padding:14px 24px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:200;backdrop-filter:blur(20px);gap:16px;flex-wrap:wrap}
 .topbar-left{display:flex;align-items:center;gap:14px;min-width:0}
+.mobile-menu-btn{display:none;background:var(--s3);border:1px solid var(--border);color:var(--t2);font-size:16px;line-height:1;padding:6px 10px;border-radius:7px;cursor:pointer}
+.mobile-menu-btn:hover{background:var(--s4);color:var(--text)}
 .topbar-badge{background:var(--gold-d);border:1px solid rgba(201,169,110,.25);color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase;padding:3px 9px;border-radius:4px;font-weight:600;white-space:nowrap}
 .topbar-company{font-size:15px;font-weight:700;letter-spacing:-.3px}
 .topbar-sub{font-size:10px;color:var(--t3);margin-top:1px}
@@ -35,6 +50,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 .topbar-btn:hover{background:var(--s4);color:var(--text);border-color:rgba(255,255,255,.1)}
 .topbar-btn.primary{background:var(--gold-d);border-color:rgba(201,169,110,.3);color:var(--gold)}
 .topbar-btn.primary:hover{background:rgba(201,169,110,.18)}
+.topbar-btn.recording{border-color:rgba(224,82,82,.55);color:var(--red);background:var(--red-d2)}
 .topbar-date{font-size:11px;color:var(--t3);text-align:right;white-space:nowrap}
 .pulse{width:8px;height:8px;border-radius:50%;background:var(--green);animation:pulse 2s infinite}
 @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(76,175,133,.4)}50%{box-shadow:0 0 0 5px rgba(76,175,133,0)}}
@@ -42,6 +58,7 @@ body{background:var(--bg);color:var(--text);font-family:-apple-system,BlinkMacSy
 /* ── LAYOUT ── */
 .layout{display:flex;min-height:calc(100vh - 60px)}
 .sidebar{width:220px;background:var(--s1);border-right:1px solid var(--border);position:sticky;top:60px;height:calc(100vh - 60px);overflow-y:auto;flex-shrink:0}
+.mobile-menu-backdrop{display:none}
 .main{flex:1;padding:24px 28px;overflow:auto;min-width:0}
 .sidebar-section{padding:12px 10px 6px;border-bottom:1px solid var(--border2)}
 .sidebar-lbl{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--t4);padding:0 8px;margin-bottom:6px}
@@ -364,7 +381,34 @@ label{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.
   .chart-row,.chart-row-3{grid-template-columns:1fr}
 }
 @media(max-width:600px){
-  .sidebar{display:none}
+  .mobile-menu-btn{display:inline-flex}
+  .sidebar{
+    display:block;
+    position:fixed;
+    top:60px;
+    left:0;
+    height:calc(100vh - 60px);
+    width:min(82vw,320px);
+    transform:translateX(-105%);
+    transition:transform .2s ease;
+    z-index:1200;
+    box-shadow:8px 0 28px rgba(0,0,0,.45)
+  }
+  .sidebar.mobile-open{transform:translateX(0)}
+  .mobile-menu-backdrop{
+    display:block;
+    position:fixed;
+    top:60px;
+    left:0;
+    right:0;
+    bottom:0;
+    background:rgba(0,0,0,.45);
+    opacity:0;
+    pointer-events:none;
+    transition:opacity .2s ease;
+    z-index:1100
+  }
+  .mobile-menu-backdrop.show{opacity:1;pointer-events:auto}
   .main{padding:14px}
   .bi-kpi-row{grid-template-columns:1fr 1fr}
   .cards-grid{grid-template-columns:1fr}
@@ -380,6 +424,7 @@ label{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.
 <!-- ── TOPBAR ── -->
 <header class="topbar">
   <div class="topbar-left">
+    <button class="mobile-menu-btn" id="mobileMenuBtn" onclick="toggleMobileMenu()" title="Abrir menu">☰</button>
     <div><div class="topbar-badge">CEO DASHBOARD · v12 · ANEXOS EMBUTIDOS</div></div>
     <div>
       <div class="topbar-company">R A Duarte Empreendimentos LTDA</div>
@@ -387,6 +432,8 @@ label{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.
     </div>
   </div>
   <div class="topbar-right">
+    <button class="topbar-btn" id="themeToggleBtn" onclick="toggleTheme()" title="Alternar tema claro/escuro">☀️ Claro</button>
+    <button class="topbar-btn" id="voiceClaudeBtn" onclick="dictateToClaude()" title="Falar e abrir no Claude">🎙️ Áudio → Claude</button>
     <button class="topbar-btn" onclick="exportSnapshot()" title="Baixar snapshot completo (JSON)">⬇ Exportar</button>
     <button class="topbar-btn" onclick="document.getElementById('importFile').click()" title="Carregar snapshot anterior">⬆ Importar</button>
     <input type="file" id="importFile" accept=".json" style="display:none" onchange="importSnapshot(event)">
@@ -395,6 +442,7 @@ label{font-size:10.5px;color:var(--t3);text-transform:uppercase;letter-spacing:.
     <div class="pulse" title="Sessão ativa"></div>
   </div>
 </header>
+<div class="mobile-menu-backdrop" id="mobileMenuBackdrop" onclick="closeMobileMenu()"></div>
 
 <div class="layout">
   <!-- ── SIDEBAR ── -->
@@ -489,6 +537,7 @@ const STORAGE_KEY = 'raduarte_ceo_dashboard_v12';
 const VERSION = 'v12';
 const VERSION_NAME = 'Anexos Embutidos';
 const PRIOR_VERSIONS = ['raduarte_ceo_dashboard_v11','raduarte_ceo_dashboard_v10','raduarte_ceo_dashboard_v9','raduarte_ceo_dashboard_v8','raduarte_ceo_dashboard_v7','raduarte_ceo_dashboard_v6','raduarte_ceo_dashboard_v5','raduarte_ceo_dashboard_v4','raduarte_ceo_dashboard_v3','raduarte_ceo_dashboard_v2'];
+const THEME_KEY = 'raduarte_ceo_dashboard_theme';
 
 /* ── PIX TYPE OPTIONS ── */
 const PIX_TYPES = {
@@ -506,6 +555,8 @@ const PIX_TYPES = {
 
 const CLAUDE_BASE_URL = 'https://claude.ai/new';
 const CLAUDE_URL_LIMIT = 1800; // safe URL param length
+let VOICE_RECOGNITION = null;
+let VOICE_LISTENING = false;
 
 /* SVG do Claude (estrela de 4 pontas estilizada) */
 const CLAUDE_SVG = `<svg viewBox="0 0 24 24" width="14" height="14" fill="currentColor" aria-hidden="true"><path d="M12 1.5L13.7 9.8L22.5 12L13.7 14.2L12 22.5L10.3 14.2L1.5 12L10.3 9.8Z"/></svg>`;
@@ -681,6 +732,141 @@ function copyToClipboard(text, label){
     catch(e2){ toast('Não foi possível copiar','error'); }
     document.body.removeChild(ta);
   }
+}
+
+/* ── THEME (CLARO / ESCURO) ── */
+function getSavedTheme(){
+  try{
+    const t = localStorage.getItem(THEME_KEY);
+    return t === 'light' ? 'light' : 'dark';
+  }catch(e){
+    return 'dark';
+  }
+}
+function applyTheme(theme){
+  const t = theme === 'light' ? 'light' : 'dark';
+  document.body.classList.toggle('theme-light', t === 'light');
+  try{ localStorage.setItem(THEME_KEY, t); }catch(e){}
+  const btn = document.getElementById('themeToggleBtn');
+  if(btn){
+    btn.textContent = t === 'light' ? '🌙 Escuro' : '☀️ Claro';
+    btn.title = t === 'light' ? 'Ativar modo escuro' : 'Ativar modo claro';
+  }
+}
+function toggleTheme(){
+  const next = document.body.classList.contains('theme-light') ? 'dark' : 'light';
+  applyTheme(next);
+  toast(next === 'light' ? 'Modo claro ativado ✓' : 'Modo escuro ativado ✓');
+}
+
+/* ── MENU MOBILE ── */
+function isMobileViewport(){
+  return window.matchMedia('(max-width: 600px)').matches;
+}
+function openMobileMenu(){
+  if(!isMobileViewport()) return;
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  if(sidebar) sidebar.classList.add('mobile-open');
+  if(backdrop) backdrop.classList.add('show');
+}
+function closeMobileMenu(){
+  const sidebar = document.querySelector('.sidebar');
+  const backdrop = document.getElementById('mobileMenuBackdrop');
+  if(sidebar) sidebar.classList.remove('mobile-open');
+  if(backdrop) backdrop.classList.remove('show');
+}
+function toggleMobileMenu(){
+  const sidebar = document.querySelector('.sidebar');
+  if(!sidebar) return;
+  if(sidebar.classList.contains('mobile-open')) closeMobileMenu();
+  else openMobileMenu();
+}
+
+/* ── ÁUDIO → CLAUDE (TRANSCRIÇÃO) ── */
+function setVoiceButtonState(listening, interimText=''){
+  const btn = document.getElementById('voiceClaudeBtn');
+  if(!btn) return;
+  if(listening){
+    btn.classList.add('recording');
+    btn.textContent = interimText ? `🎙️ ${interimText.slice(0,22)}${interimText.length>22?'…':''}` : '🛑 Parar áudio';
+  } else {
+    btn.classList.remove('recording');
+    btn.textContent = '🎙️ Áudio → Claude';
+  }
+}
+function openClaudeWithPrompt(prompt, successMsg){
+  if(!prompt) return;
+  const url = `${CLAUDE_BASE_URL}?q=${encodeURIComponent(prompt)}`;
+  if(url.length < 8000){
+    window.open(url, '_blank', 'noopener');
+    toast(successMsg || 'Abrindo Claude…');
+  } else {
+    copyToClipboard(prompt, 'Prompt para Claude');
+    window.open(CLAUDE_BASE_URL, '_blank', 'noopener');
+    setTimeout(()=>toast('Prompt copiado. Cole no Claude com ⌘V.','warn'),300);
+  }
+}
+function openVoicePromptInClaude(transcript){
+  const cleaned = (transcript||'').trim();
+  if(!cleaned){
+    toast('Não consegui captar o áudio. Tente novamente.','warn');
+    return;
+  }
+  const prompt = `Olá Claude. Esta é uma transcrição de áudio minha para você transformar em ação:\n\n` +
+    `TRANSCRIÇÃO:\n"${cleaned}"\n\n` +
+    `CONTEXTO DO DASHBOARD:\n` +
+    `- Página atual: ${state?.currentPage || 'overview'}\n` +
+    `- Data: ${todayISO()}\n\n` +
+    `Quero sua ajuda em 3 blocos:\n` +
+    `1) Resuma em 3-5 bullets objetivas.\n` +
+    `2) Extraia tarefas acionáveis com prioridade (alta/média/baixa).\n` +
+    `3) Sugira a próxima ação de 15 minutos para eu executar agora.`;
+  openClaudeWithPrompt(prompt, 'Abrindo Claude com seu áudio transcrito…');
+}
+function dictateToClaude(){
+  const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SR){
+    const typed = prompt('Seu navegador não liberou ditado por voz aqui. Digite o texto que quer enviar ao Claude:','');
+    if(typed && typed.trim()) openVoicePromptInClaude(typed);
+    return;
+  }
+  if(VOICE_LISTENING && VOICE_RECOGNITION){
+    VOICE_RECOGNITION.stop();
+    return;
+  }
+  let finalTranscript = '';
+  VOICE_RECOGNITION = new SR();
+  VOICE_RECOGNITION.lang = 'pt-BR';
+  VOICE_RECOGNITION.continuous = false;
+  VOICE_RECOGNITION.interimResults = true;
+  VOICE_RECOGNITION.maxAlternatives = 1;
+
+  VOICE_RECOGNITION.onstart = function(){
+    VOICE_LISTENING = true;
+    setVoiceButtonState(true);
+    toast('Estou ouvindo… toque novamente para encerrar.');
+  };
+  VOICE_RECOGNITION.onresult = function(ev){
+    let interim = '';
+    for(let i=ev.resultIndex; i<ev.results.length; i++){
+      const txt = ev.results[i][0]?.transcript || '';
+      if(ev.results[i].isFinal) finalTranscript += (finalTranscript?' ':'') + txt;
+      else interim += txt;
+    }
+    setVoiceButtonState(true, interim || finalTranscript);
+  };
+  VOICE_RECOGNITION.onerror = function(){
+    VOICE_LISTENING = false;
+    setVoiceButtonState(false);
+    toast('Não consegui capturar o áudio neste navegador.','warn');
+  };
+  VOICE_RECOGNITION.onend = function(){
+    VOICE_LISTENING = false;
+    setVoiceButtonState(false);
+    if(finalTranscript.trim()) openVoicePromptInClaude(finalTranscript);
+  };
+  VOICE_RECOGNITION.start();
 }
 
 /* ── PRIORITY OPTIONS ── */
@@ -1429,6 +1615,7 @@ function showPage(page, el){
   state.currentPage = page;
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   if(el) el.classList.add('active');
+  closeMobileMenu();
   renderCurrentPage();
   saveState();
 }
@@ -4083,6 +4270,7 @@ function goToCategory(cat){
   CATEGORY_FILTER = cat;
   TASKS_FILTER = 'all';
   state.currentPage = 'tasks';
+  closeMobileMenu();
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   renderCurrentPage();
   renderSidebarCategories();
@@ -4103,10 +4291,13 @@ showPage = function(page, el){
 
 /* INIT — run after all scripts loaded */
 window.addEventListener('DOMContentLoaded', ()=>{
+  applyTheme(getSavedTheme());
   tickDate();
   updateLastSavedLabel();
   renderCurrentPage();
   renderSidebarCategories();
+  window.addEventListener('resize', ()=>{ if(!isMobileViewport()) closeMobileMenu(); });
+  document.addEventListener('keydown', (e)=>{ if(e.key==='Escape') closeMobileMenu(); });
 });
 </script>
 
