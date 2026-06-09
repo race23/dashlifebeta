@@ -1,0 +1,610 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<title>DashLife · Financeiro · Contas a Pagar</title>
+<style>
+  /* ===== THEME TOKENS ===== */
+  :root, [data-theme="dark"]{
+    --bg:#080808; --bg-grad-1:#0c0c10; --bg-grad-2:#080808;
+    --surface:rgba(28,28,30,0.72); --surface-2:rgba(44,44,46,0.6); --surface-solid:#1c1c1e;
+    --glass-bg:rgba(20,20,22,0.55); --glass-bg-strong:rgba(14,14,16,0.78);
+    --hairline:rgba(255,255,255,0.08); --hairline-strong:rgba(255,255,255,0.14);
+    --inner-highlight:rgba(255,255,255,0.06);
+    --text:#f5f5f7; --t2:#a8a8ad; --t3:#6e6e73; --t4:#3a3a3c;
+    --shadow:0 20px 60px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+    --shadow-soft:0 10px 30px rgba(0,0,0,.35);
+    --gold:#d4b87a; --gold-tint:rgba(212,184,122,0.14); --gold-tint-2:rgba(212,184,122,0.06);
+    --green:#5fd49d; --green-tint:rgba(95,212,157,0.16);
+    --red:#ff6b6b; --red-tint:rgba(255,107,107,0.16);
+    --amber:#e8a661; --amber-tint:rgba(232,166,97,0.16);
+    --blue:#6aa4ff; --blue-tint:rgba(106,164,255,0.16);
+    --purple:#b48dff; --purple-tint:rgba(180,141,255,0.16);
+    --teal:#5fcfd9; --teal-tint:rgba(95,207,217,0.16);
+    --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:28px; --r-pill:999px;
+    --tab-h:64px;
+    --mono:'SF Mono',ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  }
+  [data-theme="light"]{
+    --bg:#f2f2f7; --bg-grad-1:#f7f6f3; --bg-grad-2:#eeeef2;
+    --surface:rgba(255,255,255,0.82); --surface-2:rgba(255,255,255,0.62); --surface-solid:#ffffff;
+    --glass-bg:rgba(255,255,255,0.72); --glass-bg-strong:rgba(255,255,255,0.88);
+    --hairline:rgba(0,0,0,0.07); --hairline-strong:rgba(0,0,0,0.12);
+    --inner-highlight:rgba(255,255,255,0.9);
+    --text:#1d1d1f; --t2:#3a3a3c; --t3:#6e6e73; --t4:#c7c7cc;
+    --shadow:0 20px 60px rgba(20,20,30,.10), 0 2px 6px rgba(20,20,30,.05);
+    --shadow-soft:0 8px 24px rgba(20,20,30,.08);
+    --gold:#a8854c; --gold-tint:rgba(168,133,76,0.12); --gold-tint-2:rgba(168,133,76,0.05);
+    --green:#1f9d62; --green-tint:rgba(31,157,98,0.12);
+    --red:#d63b3b; --red-tint:rgba(214,59,59,0.12);
+    --amber:#b87420; --amber-tint:rgba(184,116,32,0.12);
+    --blue:#1d6fdf; --blue-tint:rgba(29,111,223,0.12);
+    --purple:#7b50d4; --purple-tint:rgba(123,80,212,0.12);
+    --teal:#16949e; --teal-tint:rgba(22,148,158,0.12);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+  html,body{margin:0;padding:0;color:var(--text);
+    font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Segoe UI',system-ui,sans-serif;
+    font-size:16px;line-height:1.45;min-height:100vh;-webkit-font-smoothing:antialiased}
+  body{
+    background:
+      radial-gradient(120% 60% at 85% 0%, var(--gold-tint) 0%, transparent 55%),
+      radial-gradient(90% 60% at 0% 100%, var(--purple-tint) 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2));
+    background-attachment:fixed;
+    transition:background .35s ease, color .25s ease;
+  }
+  :root{ --safe-top:env(safe-area-inset-top,0px); --safe-bottom:env(safe-area-inset-bottom,0px); }
+
+  .app{position:relative;min-height:100vh}
+
+  /* ===== TOPBAR ===== */
+  .topbar{
+    position:sticky;top:0;z-index:100;
+    background:var(--glass-bg);
+    backdrop-filter:saturate(180%) blur(28px);-webkit-backdrop-filter:saturate(180%) blur(28px);
+    border-bottom:0.5px solid var(--hairline);
+    padding:calc(var(--safe-top) + 14px) 18px 12px;
+    display:flex;align-items:center;gap:10px;
+  }
+  .topbar-logo{font-size:14px;font-weight:700;letter-spacing:.3px}
+  .topbar-logo span{color:var(--gold)}
+  .topbar-badge{background:var(--green-tint);border:0.5px solid var(--green-tint);color:var(--green);
+    font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;padding:3px 7px;border-radius:6px;font-weight:700}
+  .topbar-spacer{flex:1}
+  .topbar-date{font-size:11px;color:var(--t3);text-align:right;line-height:1.25;font-feature-settings:"tnum"}
+  .topbar-date b{display:block;color:var(--t2);font-weight:500;font-size:12px}
+  .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green-tint);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.85)}}
+  .theme-toggle{appearance:none;border:0.5px solid var(--hairline-strong);background:var(--surface);
+    backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);width:34px;height:34px;border-radius:var(--r-pill);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);font-size:15px;flex-shrink:0;transition:all .25s ease}
+  .theme-toggle:active{transform:scale(.92)}
+  .theme-toggle .icon-sun{display:none}.theme-toggle .icon-moon{display:block}
+  [data-theme="light"] .theme-toggle .icon-sun{display:block}[data-theme="light"] .theme-toggle .icon-moon{display:none}
+  .nav-desktop{display:none}
+
+  /* ===== SCROLL / LAYOUT ===== */
+  .scroll{padding:0 18px calc(var(--tab-h) + var(--safe-bottom) + 56px)}
+  .inner{display:block}
+  .col-main{min-width:0}
+  .col-side{min-width:0}
+
+  /* ===== LARGE TITLE + DEVICE CHIP ===== */
+  .large-title{padding:18px 4px 4px}
+  .large-title .eyebrow{font-size:11px;letter-spacing:.5px;color:var(--t3);font-weight:500;margin-bottom:2px}
+  .large-title h1{margin:0;font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.05}
+  .large-title h1 span{color:var(--gold)}
+  .device-chip{display:inline-flex;align-items:center;gap:7px;margin:12px 4px 0;
+    background:var(--surface);border:0.5px solid var(--hairline);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+    padding:6px 11px 6px 9px;border-radius:var(--r-pill);font-size:11.5px;color:var(--t2);box-shadow:var(--shadow-soft)}
+  .device-chip .dico{width:22px;height:22px;border-radius:7px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:13px;background:var(--blue-tint);color:var(--blue)}
+  .device-chip b{color:var(--text);font-weight:600}
+  .device-chip .sep{color:var(--t4)}
+
+  /* ===== HERO ===== */
+  .hero{margin:16px 0 18px;
+    background:linear-gradient(135deg, var(--gold-tint) 0%, transparent 55%), var(--surface);
+    backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);border-radius:var(--r-lg);padding:18px 20px;box-shadow:var(--shadow-soft);position:relative;overflow:hidden}
+  .hero::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px 0 var(--inner-highlight)}
+  .hero-row{display:flex;align-items:center;gap:14px}
+  .hero-glyph{width:52px;height:52px;border-radius:var(--r-md);background:linear-gradient(135deg,var(--gold),#b89559);
+    display:flex;align-items:center;justify-content:center;font-size:24px;color:#fff;flex-shrink:0;box-shadow:0 6px 18px var(--gold-tint),inset 0 1px 0 rgba(255,255,255,.3)}
+  .hero-info{flex:1;min-width:0}
+  .hero-eyebrow{font-size:11px;letter-spacing:.4px;color:var(--t3);font-weight:500}
+  .hero-title{font-size:26px;font-weight:800;letter-spacing:-.9px;line-height:1;margin-top:2px;font-feature-settings:"tnum";color:var(--gold)}
+  .hero-sub{font-size:12.5px;color:var(--t3);margin-top:10px;line-height:1.45}
+  .hero-sub b{color:var(--t2);font-weight:600}
+
+  /* ===== KPI ===== */
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:22px}
+  .kpi{background:var(--surface);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);border-radius:var(--r-md);padding:14px 16px;min-height:96px;
+    display:flex;flex-direction:column;justify-content:space-between;box-shadow:var(--shadow-soft);position:relative;overflow:hidden}
+  .kpi::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px 0 var(--inner-highlight)}
+  .kpi .lbl{font-size:11px;letter-spacing:.2px;color:var(--t3);font-weight:500}
+  .kpi .val{font-size:22px;font-weight:700;letter-spacing:-.6px;line-height:1;font-feature-settings:"tnum"}
+  .kpi .sub{font-size:11.5px;color:var(--t3);margin-top:4px}
+  .kpi.gold .val{color:var(--gold)} .kpi.green .val{color:var(--green)} .kpi.red .val{color:var(--red)}
+  .kpi.teal .val{color:var(--teal)} .kpi.amber .val{color:var(--amber)}
+
+  /* ===== SEARCH / SORT / CHIPS ===== */
+  .search-wrap{position:relative;margin-bottom:11px}
+  .search-wrap .sico{position:absolute;left:13px;top:50%;transform:translateY(-50%);font-size:14px;color:var(--t3);pointer-events:none}
+  .search{width:100%;min-height:42px;border:0.5px solid var(--hairline);border-radius:var(--r-sm);background:var(--surface);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--text);padding:11px 12px 11px 36px;outline:none;font-size:15px}
+  .search::placeholder{color:var(--t3)}
+  .search:focus{border-color:var(--gold-tint);box-shadow:0 0 0 3px var(--gold-tint)}
+  .sort-row{display:flex;align-items:center;gap:8px;margin-bottom:14px}
+  .sort-row .lbl{font-size:11.5px;color:var(--t3);font-weight:500;flex-shrink:0}
+  .select{flex:1;min-height:38px;border:0.5px solid var(--hairline);border-radius:var(--r-sm);background:var(--surface);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--text);padding:8px 12px;outline:none;font-size:13.5px;appearance:none;cursor:pointer}
+  .select:focus{border-color:var(--gold-tint)}
+  .chips{display:flex;gap:8px;overflow-x:auto;margin:0 -18px 18px;padding:0 18px 2px;scrollbar-width:none;-webkit-overflow-scrolling:touch}
+  .chips::-webkit-scrollbar{display:none}
+  .chip{flex-shrink:0;border:0.5px solid var(--hairline);background:var(--surface);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+    color:var(--t2);font-size:12.5px;font-weight:600;letter-spacing:-.1px;padding:8px 14px;border-radius:var(--r-pill);cursor:pointer;white-space:nowrap;transition:all .2s ease}
+  .chip:active{transform:scale(.95)}
+  .chip[aria-selected="true"]{background:var(--gold);border-color:var(--gold);color:#1a1407}
+  [data-theme="light"] .chip[aria-selected="true"]{color:#fff}
+
+  /* ===== SECTION HEADER ===== */
+  .section-h{font-size:12.5px;color:var(--t2);font-weight:600;letter-spacing:-.1px;margin:18px 4px 11px;display:flex;align-items:center;justify-content:space-between}
+  .section-h .ct{color:var(--t3);font-weight:500;font-size:12px}
+
+  /* ===== BILL CARDS ===== */
+  .cards{display:grid;gap:12px}
+  .card{background:var(--surface);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);border-radius:var(--r-md);padding:16px 16px 14px;box-shadow:var(--shadow-soft);position:relative;overflow:hidden}
+  .card::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px 0 var(--inner-highlight)}
+  .card .accent{position:absolute;top:0;left:0;bottom:0;width:3px;border-radius:0 3px 3px 0}
+  .card.overdue .accent{background:var(--red)} .card.due .accent{background:var(--amber)}
+  .card.pending .accent{background:var(--blue)} .card.future .accent{background:var(--green)}
+  .card.paidcard{opacity:.62}.card.paidcard .accent{background:var(--t4)}
+  .card-head{display:flex;align-items:flex-start;gap:10px}
+  .card-head .h-main{flex:1;min-width:0}
+  .card h3{margin:0 0 7px;font-size:16px;line-height:1.22;font-weight:700;letter-spacing:-.3px}
+  .card .amount{text-align:right;flex-shrink:0}
+  .card .amount strong{display:block;font-size:18px;font-weight:700;letter-spacing:-.4px;line-height:1.1;font-feature-settings:"tnum"}
+  .card .amount small{display:block;color:var(--t3);font-size:11px;margin-top:3px;font-feature-settings:"tnum"}
+  .meta{display:flex;flex-wrap:wrap;gap:6px;margin:2px 0 0}
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:10.5px;font-weight:700;letter-spacing:.1px;padding:4px 9px;border-radius:var(--r-pill);
+    background:var(--surface-2);color:var(--t2);border:0.5px solid var(--hairline)}
+  .pill.red{background:var(--red-tint);color:var(--red);border-color:transparent}
+  .pill.amber{background:var(--amber-tint);color:var(--amber);border-color:transparent}
+  .pill.green{background:var(--green-tint);color:var(--green);border-color:transparent}
+  .pill.blue{background:var(--blue-tint);color:var(--blue);border-color:transparent}
+  .detail-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:13px}
+  .detail{border:0.5px solid var(--hairline);border-radius:var(--r-xs);padding:9px 10px;background:var(--surface-2);min-width:0}
+  .detail label{display:block;color:var(--t3);font-size:10.5px;margin-bottom:3px;letter-spacing:.2px}
+  .detail b{display:block;font-size:12.5px;line-height:1.25;font-weight:600;overflow-wrap:anywhere}
+  .codebox{margin-top:11px;border:0.5px solid var(--hairline);border-radius:var(--r-xs);background:var(--surface-2);overflow:hidden}
+  .codebar{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:8px 10px;border-bottom:0.5px solid var(--hairline)}
+  .codebar b{font-size:11.5px;color:var(--t2);font-weight:600}
+  .code{margin:0;padding:10px;font-family:var(--mono);font-size:11px;line-height:1.5;white-space:pre-wrap;overflow-wrap:anywhere;color:var(--gold);-webkit-user-select:text;user-select:text}
+  .nocode{padding:10px;color:var(--t3);font-size:12px;line-height:1.5}
+  .note{margin:11px 0 0;color:var(--t3);line-height:1.5;font-size:12px}
+  .card-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:13px;align-items:center}
+  .btn{appearance:none;cursor:pointer;border:0.5px solid var(--hairline-strong);background:var(--surface);
+    backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);color:var(--text);font-size:12.5px;font-weight:600;padding:8px 13px;border-radius:var(--r-pill);transition:transform .15s ease}
+  .btn:active{transform:scale(.94)}
+  .btn.mini{padding:6px 11px;font-size:11.5px}
+  .btn.gold{background:var(--gold);border-color:var(--gold);color:#1a1407}
+  [data-theme="light"] .btn.gold{color:#fff}
+  .check{display:inline-flex;align-items:center;gap:8px;color:var(--t2);font-size:12.5px;cursor:pointer;min-height:32px}
+  .check input{width:18px;height:18px;accent-color:var(--green)}
+  .empty{border:0.5px dashed var(--hairline-strong);border-radius:var(--r-md);padding:26px 18px;color:var(--t3);text-align:center;font-size:13px;background:var(--surface)}
+
+  /* ===== SIDE PANELS ===== */
+  .panel{background:var(--surface);border:0.5px solid var(--hairline);backdrop-filter:saturate(180%) blur(20px);-webkit-backdrop-filter:saturate(180%) blur(20px);
+    border-radius:var(--r-md);padding:15px 16px;margin-top:12px;box-shadow:var(--shadow-soft);position:relative;overflow:hidden}
+  .panel::before{content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;box-shadow:inset 0 1px 0 var(--inner-highlight)}
+  .panel h4{margin:0 0 10px;font-size:13px;font-weight:700;display:flex;align-items:center;gap:8px}
+  .panel h4 .ico{width:26px;height:26px;border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:14px}
+  .panel p{margin:0;color:var(--t3);font-size:12px;line-height:1.55}
+  .focus-list{list-style:none;margin:0;padding:0;display:grid;gap:9px}
+  .focus-list li{border:0.5px solid var(--hairline);border-radius:var(--r-xs);padding:10px;background:var(--surface-2)}
+  .focus-list b{display:block;font-size:13px;margin-bottom:3px;font-weight:600}
+  .focus-list span{display:block;color:var(--t3);font-size:11.5px}
+
+  /* ===== TAB BAR ===== */
+  .tabbar{position:fixed;left:16px;right:16px;bottom:calc(var(--safe-bottom) + 14px);height:var(--tab-h);
+    background:var(--glass-bg-strong);backdrop-filter:saturate(200%) blur(36px);-webkit-backdrop-filter:saturate(200%) blur(36px);
+    border:0.5px solid var(--hairline-strong);border-radius:var(--r-pill);display:flex;z-index:200;
+    box-shadow:0 20px 50px rgba(0,0,0,.45),0 6px 20px rgba(0,0,0,.25),inset 0 1px 0 var(--inner-highlight)}
+  [data-theme="light"] .tabbar{box-shadow:0 20px 50px rgba(20,20,30,.14),0 6px 20px rgba(20,20,30,.08),inset 0 1px 0 rgba(255,255,255,.9)}
+  .tab{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:2px;cursor:pointer;color:var(--t3);position:relative;border-radius:var(--r-pill);text-decoration:none;transition:color .25s ease}
+  .tab .ico{font-size:20px;line-height:1}
+  .tab .lbl{font-size:10px;font-weight:500;letter-spacing:.1px}
+  .tab.active{color:var(--gold)}
+  .tab.active .ico{transform:translateY(-1px);filter:drop-shadow(0 2px 4px var(--gold-tint))}
+  .tab .badge{position:absolute;top:8px;right:calc(50% - 20px);background:var(--red);color:#fff;font-size:9px;font-weight:700;min-width:16px;height:16px;border-radius:99px;display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1;box-shadow:0 2px 6px rgba(0,0,0,.3)}
+
+  /* ===== TOAST ===== */
+  .toast{position:fixed;left:50%;bottom:calc(var(--tab-h) + var(--safe-bottom) + 30px);transform:translateX(-50%) translateY(12px);z-index:300;
+    background:var(--glass-bg-strong);color:var(--text);backdrop-filter:saturate(180%) blur(28px);-webkit-backdrop-filter:saturate(180%) blur(28px);
+    border:0.5px solid var(--hairline-strong);padding:11px 18px;border-radius:var(--r-pill);font-size:13px;font-weight:600;box-shadow:var(--shadow);opacity:0;pointer-events:none;transition:opacity .2s ease, transform .2s ease}
+  .toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+  /* =====================================================================
+     DESKTOP / MAC LAYOUT  (>= 900px) — dashboard largo, sem frame
+     ===================================================================== */
+  @media (min-width:900px){
+    .app{max-width:1240px;margin:0 auto}
+    .topbar{padding:18px 32px 14px;gap:14px}
+    .topbar-logo{font-size:16px}
+    .nav-desktop{display:flex;gap:4px;margin-left:18px}
+    .nav-desktop a{display:flex;align-items:center;gap:7px;text-decoration:none;color:var(--t3);font-size:13px;font-weight:600;
+      padding:7px 13px;border-radius:var(--r-pill);transition:all .2s ease}
+    .nav-desktop a:hover{color:var(--text);background:var(--surface-2)}
+    .nav-desktop a.active{color:var(--gold);background:var(--gold-tint)}
+    .scroll{padding:8px 32px 56px}
+    .inner{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:28px;align-items:start}
+    .large-title{padding:14px 2px 2px}
+    .large-title h1{font-size:46px;letter-spacing:-1.8px}
+    .hero{margin:18px 0 20px;padding:22px 26px}
+    .hero-glyph{width:60px;height:60px;font-size:28px}
+    .hero-title{font-size:34px}
+    .kpi-grid{grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:8px}
+    .kpi .val{font-size:24px}
+    .toolbar{display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:12px;align-items:center;margin:6px 0 4px}
+    .search-wrap{margin-bottom:0}
+    .sort-row{margin-bottom:0}
+    .cards{grid-template-columns:1fr 1fr}
+    .col-side{position:sticky;top:96px}
+    .col-side .panel:first-child{margin-top:0}
+    .tabbar{display:none}            /* desktop usa o nav do topo */
+    .scroll{padding-bottom:48px}
+  }
+  @media (max-width:899px){
+    .toolbar{display:block}
+    .col-side{margin-top:6px}
+  }
+</style>
+</head>
+<body>
+
+<div class="app" id="app">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-logo">DASH<span>LIFE</span></div>
+    <span class="topbar-badge">Financeiro</span>
+    <nav class="nav-desktop">
+      <a href="01-visao-geral.html">◐ Visão Geral</a>
+      <a href="02-financeiro.html" class="active">💳 Financeiro</a>
+      <a href="index.html">⋯ Telas</a>
+    </nav>
+    <div class="topbar-spacer"></div>
+    <div class="pulse"></div>
+    <div class="topbar-date"><b>09 jun</b><span>Gmail verificado</span></div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
+      <span class="icon-moon">☾</span><span class="icon-sun">☀︎</span>
+    </button>
+  </header>
+
+  <main class="scroll">
+
+    <div class="large-title">
+      <div class="eyebrow">Contas a pagar · junho/julho 2026</div>
+      <h1>Finan<span>ceiro</span></h1>
+    </div>
+
+    <div class="device-chip" data-device-chip>
+      <span class="dico" data-device-ico>🖥️</span>
+      <span>Aberto no <b data-device-name>—</b></span>
+      <span class="sep">·</span>
+      <span data-device-mode>—</span>
+    </div>
+
+    <div class="inner">
+      <!-- COLUNA PRINCIPAL -->
+      <div class="col-main">
+
+        <section class="hero">
+          <div class="hero-row">
+            <div class="hero-glyph">💳</div>
+            <div class="hero-info">
+              <div class="hero-eyebrow">Total em aberto</div>
+              <div class="hero-title" data-hero-total>R$ —</div>
+            </div>
+          </div>
+          <div class="hero-sub" data-hero-sub>—</div>
+        </section>
+
+        <div class="kpi-grid">
+          <div class="kpi gold"><div class="lbl">Pagar com código</div><div><div class="val" data-kpi-payable>R$ —</div><div class="sub" data-kpi-payable-ct>—</div></div></div>
+          <div class="kpi red"><div class="lbl">Vencidas abertas</div><div><div class="val" data-kpi-overdue>R$ —</div><div class="sub" data-kpi-overdue-ct>—</div></div></div>
+          <div class="kpi amber"><div class="lbl">Sem informar pago</div><div><div class="val" data-kpi-open>R$ —</div><div class="sub" data-kpi-open-ct>—</div></div></div>
+          <div class="kpi teal"><div class="lbl">Junho mapeado</div><div><div class="val" data-kpi-june>R$ —</div><div class="sub" data-kpi-june-ct>—</div></div></div>
+        </div>
+
+        <div class="toolbar">
+          <div class="search-wrap">
+            <span class="sico">⌕</span>
+            <input class="search" data-search type="search" placeholder="Buscar nome, valor, categoria…">
+          </div>
+          <div class="sort-row">
+            <span class="lbl">Ordenar</span>
+            <select class="select" data-sort aria-label="Ordenação">
+              <option value="due">Por vencimento</option>
+              <option value="amount">Maior valor primeiro</option>
+              <option value="category">Por categoria</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="chips" data-chips>
+          <button class="chip" data-tab="all" aria-selected="true">Tudo</button>
+          <button class="chip" data-tab="focus" aria-selected="false">🎯 Modo foco</button>
+          <button class="chip" data-tab="vencidas" aria-selected="false">Vencidas</button>
+          <button class="chip" data-tab="sem-informar-pago" aria-selected="false">A pagar</button>
+          <button class="chip" data-tab="pago" aria-selected="false">Pago</button>
+          <button class="chip" data-tab="junho" aria-selected="false">Junho</button>
+          <button class="chip" data-tab="sem-codigo" aria-selected="false">Sem código</button>
+          <button class="chip" data-tab="acordos" aria-selected="false">Acordos</button>
+        </div>
+
+        <div data-list></div>
+
+        <div style="margin:18px 0 4px">
+          <button class="btn gold" type="button" data-copy-focus style="width:100%;padding:12px">📋 Copiar modo foco (contas com código)</button>
+        </div>
+      </div>
+
+      <!-- COLUNA LATERAL -->
+      <aside class="col-side">
+        <section class="panel">
+          <h4><span class="ico" style="background:var(--red-tint);color:var(--red)">🎯</span>Modo foco</h4>
+          <ul class="focus-list" data-focus-list></ul>
+        </section>
+        <section class="panel">
+          <h4><span class="ico" style="background:var(--blue-tint);color:var(--blue)">📱</span>SMS / iPhone</h4>
+          <p>Print do iPhone de 05/06/2026 incluído: empréstimo R$ 815,72, Claro vencida e MAPFRE Consórcio boleto 005034/1143. Em 09/06 a leitura do chat.db retornou "authorization denied" — a varredura segue por Gmail, print do iPhone e histórico do WhatsApp.</p>
+        </section>
+        <section class="panel">
+          <h4><span class="ico" style="background:var(--gold-tint);color:var(--gold)">🔎</span>Fontes</h4>
+          <p>Base: PDFs anteriores, acordo Dorcia/Barbudus/Adega Hara, Gmail de 01/05 a 30/07/2026 e WhatsApp. Em 09/06 entraram Nio Fibra, Claro 10/06, RHANNA 10/06, BTG Empresas 11/06 e Amil em atraso.</p>
+        </section>
+      </aside>
+    </div>
+
+  </main>
+
+  <!-- TAB BAR (mobile) -->
+  <nav class="tabbar">
+    <div class="tab"><div class="ico">🎯</div><div class="lbl">Foco</div></div>
+    <a class="tab" href="01-visao-geral.html"><div class="ico">◐</div><div class="lbl">Visão</div></a>
+    <div class="tab active"><div class="ico">💳</div><div class="lbl">Financeiro</div></div>
+    <div class="tab"><div class="ico">●</div><div class="lbl">Decisões</div><div class="badge">3</div></div>
+    <div class="tab"><div class="ico">⋯</div><div class="lbl">Mais</div></div>
+  </nav>
+
+</div>
+
+<div class="toast" data-toast></div>
+
+<script>
+  (function(){
+    const saved = localStorage.getItem('dl-theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    document.documentElement.setAttribute('data-theme', saved || (prefersLight ? 'light' : 'dark'));
+  })();
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    localStorage.setItem('dl-theme', next);
+  }
+
+  const bills = [
+    { id:"acordo-dorcia-maio-quitado", title:"Acordo Dorcia + Barbudus + Adega Hara — maio quitado", category:"Acordos", group:"acordos", paymentState:"paid", due:"2026-05-20", amount:6000.00, status:"Pago informado", method:"Controle", payee:"RAFAEL SANTANA MARTINS", source:"Informado por você em 30/05", priority:0, codes:[], note:"Maio/2026 considerado quitado. Mantido como registro para não voltar ao modo foco." },
+    { id:"claro-maio", title:"Claro", category:"Serviços", group:"vencidas", paymentState:"unknown", due:"2026-05-10", amount:96.10, status:"Vencida", method:"PIX ou código de barras", payee:"Claro S/A", source:"Gmail fatura digital", priority:1, codes:[ {label:"PIX copia e cola", value:"00020101021126580014br.gov.bcb.pix01362b946329-3dd9-4237-9897-658af92371ef520400005303986540596.105802BR5909Claro S/A6014RIO DE JANEIRO622705230631180380000040498919263043270"}, {label:"Código de barras", value:"846600000000961001622029605100380001004049891924"} ], note:"Já vencida no relatório anterior. Print do iPhone em 05/06 reforça o alerta: 2ª via em clarobr.co/3uJ5vqQ ou ligar 10621." },
+    { id:"nio-fibra-2804", title:"Nio Fibra", category:"Internet", group:"vencidas", paymentState:"unknown", due:"2026-04-28", amount:129.90, status:"Vencida", method:"Boleto", payee:"Nio Fibra", source:"Gmail Nio de 02/05 a 12/05", priority:2, codes:[ {label:"Código de barras", value:"03391143000000129909053844310011918726620101"} ], note:"A Nio repetiu a cobrança em maio, sempre com vencimento 28/04/2026. O email de 12/05 informou conexão limitada por falta de pagamento." },
+    { id:"funesbom-junho", title:"FUNESBOM / Taxa de incêndio", category:"Taxas", group:"vencidas", paymentState:"unknown", due:"2026-06-04", amount:138.80, status:"Vencida", method:"Boleto", payee:"ERJ-SEDC-CBMERJ-FUNESBOM-TX INCENDIO", source:"Gmail C6 Bank + Nubank", priority:3, codes:[ {label:"Linha digitável / boleto", value:"23796898199690272636170999999801114670000013880"} ], note:"Encontrado em duplicidade no C6 e Nubank. Use um único pagamento." },
+    { id:"armando-aluguel-0506", title:"Repasse aluguel loja Barra Prime", category:"Aluguel", group:"vencidas", paymentState:"unknown", due:"2026-06-05", amount:3500.00, status:"Vencida em 05/06", method:"PIX", payee:"Neves da Cruz consultoria e adm imobiliária", source:"Gmail Armando Cesar", priority:4, codes:[ {label:"Chave PIX", value:"armandocesar1966@gmail.com"} ], note:"Email de 05/06/2026 pediu Pix para a chave acima." },
+    { id:"riobarra-0506", title:"Riobarra / Central Larissa", category:"Acordos e parcelas", group:"vencidas", paymentState:"unknown", due:"2026-06-05", amount:2550.00, status:"Vencida em 05/06", method:"PIX CNPJ", payee:"RIOBARRA EMPREENDIMENTOS IMOBILIARIOS LTDA", source:"WhatsApp Larissa", priority:5, codes:[ {label:"Chave PIX CNPJ", value:"13.808.433/0001-10"} ], note:"Pagamento de maio vencido em 10/05 foi movido para 05/06." },
+    { id:"barra-prime-condominio", title:"Condomínio Barra Prime / VTX", category:"Condomínio", group:"sem-codigo", paymentState:"unknown", due:"2026-05-05", amount:2840.57, status:"Vencida sem código", method:"Segunda via", payee:"VTX Administradora de Condomínios", source:"Gmail Armando / Barra Prime Offices", priority:6, codes:[], note:"Título 559987. Segunda via: contato@vortexadm.com.br. Comprovante: financeiro@vortexadm.com.br." },
+    { id:"btg-hotel-fazenda", title:"Pix falhou: Hotel Fazenda Maria Bonita", category:"Pix não concluído", group:"sem-codigo", paymentState:"unknown", due:"2026-06-04", amount:817.00, status:"Pix falhou", method:"Reabrir no BTG Empresas", payee:"HOTEL FAZENDA MARIA BONITA LTDA", source:"Gmail BTG Empresas", priority:7, codes:[], note:"Várias tentativas de Pix não concluídas em 04/06. Acessar contas a pagar no BTG para refazer." },
+    { id:"laguna-di-mare-0806", title:"Condomínio Laguna Di Mare", category:"Condomínio", group:"sem-codigo", paymentState:"unknown", due:"2026-06-08", amount:3434.32, status:"Boleto a vencer", method:"Boleto / linha digitável", payee:"CONDOMINIO DO EDIFICIO LAGUNA DI MARE", source:"Gmail Live Facilities + C6 Bank", priority:8, codes:[ {label:"Linha digitável / boleto", value:"34191090322769728879629867990003214710000343432"} ], note:"Aviso de boleto em 29/05/2026 e novo alerta do C6 em 08/06/2026. Documento 3276972." },
+    { id:"barbeiros", title:"Saldo barbeiros", category:"Equipe / fornecedores", group:"sem-codigo", paymentState:"unknown", due:"2026-06-05", amount:6917.32, status:"Sem código", method:"A confirmar", payee:"Antonio e Toninho", source:"WhatsApp Bia", priority:9, codes:[], note:"Antonio: R$ 3.457,76. Toninho: R$ 3.369,56." },
+    { id:"acordo-dorcia-junho", title:"Acordo Dorcia + Barbudus + Adega Hara", category:"Acordos", group:"acordos", paymentState:"unknown", due:"2026-06-20", amount:18666.67, status:"Junho", method:"Transferência / dados bancários", payee:"RAFAEL SANTANA MARTINS", source:"Arquivo Pages do acordo", priority:10, codes:[ {label:"Dados bancários", value:"Itau | Agencia 4100 | Conta Corrente 01790-6 | CPF 07790119702 | Titular RAFAEL SANTANA MARTINS"} ], note:"Parcela 28/30. Valor base R$ 18.666,67, com correção IPCA conforme acordo." },
+    { id:"amil-2405", title:"Amil — mensalidade 05/2026", category:"Saúde", group:"sem-codigo", paymentState:"unknown", due:"2026-05-24", amount:5707.11, status:"Em atraso", method:"Segunda via", payee:"Grupo Amil", source:"Gmail Amil 08/06", priority:11, codes:[], note:"Contrato 1761123000, fatura 715869 em aberto, R$ 5.707,11, vencimento 24/05/2026. Email trouxe só link para segunda via." },
+    { id:"emprestimo-0806-sms", title:"Mercado Pago / Mercado Livre — empréstimo", category:"Empréstimos", group:"junho", paymentState:"unknown", due:"2026-06-08", amount:815.72, status:"Vence em 08/06", method:"Débito automático, Pix ou boleto", payee:"Mercado Pago / Mercado Livre", source:"Print iPhone 05/06 + Gmail 07/06", priority:12, codes:[], note:"Print do iPhone antecipou o alerta; Gmail de 07/06 identificou como Linha de Crédito do Mercado Livre/Pago. Sem código copiável no corpo." },
+    { id:"google-one-1006", title:"Google One / Google AI Pro", category:"Assinaturas", group:"junho", paymentState:"watch", due:"2026-06-10", amount:96.99, status:"Cobrança automática", method:"Google Play", payee:"Google Play", source:"Gmail Google Play", priority:13, codes:[], note:"Recibo de 10/05 mostrou renovação inicial de R$ 48,49/mês. Email de 03/06 confirma fim do preço inicial em 10/06 e cobrança automática de R$ 96,99." },
+    { id:"consorcio-magalu-2206", title:"Consórcio Magalu", category:"Consórcio", group:"junho", paymentState:"unknown", due:"2026-06-22", amount:1170.00, status:"Boleto disponível", method:"Boleto", payee:"LUIZA ADMINISTRADORA DE CONSORCIOS LTDA", source:"Gmail C6 Bank + Nubank", priority:14, codes:[ {label:"Linha digitável / boleto", value:"03399759899980000247197140501012414850000117000"} ], note:"Em 29/05 o C6 e o Nubank localizaram boleto de R$ 1.170,00 para 22/06/2026." },
+    { id:"globoplay-suspensa-0606", title:"Globoplay", category:"Assinaturas", group:"sem-codigo", paymentState:"unknown", due:"2026-06-06", amount:null, status:"Assinatura suspensa", method:"Atualizar forma de pagamento", payee:"Produtos Globo / Globoplay", source:"Gmail comunicados.globo.com", priority:15, codes:[], note:"Email de 06/06 informa assinatura suspensa e pede atualização da forma de pagamento. Sem valor nem link copiável." },
+    { id:"mapfre-consorcio-0806", title:"MAPFRE Consórcio — boleto 005034/1143", category:"Seguro", group:"junho", paymentState:"unknown", due:"2026-06-08", amount:1794.39, status:"Vence em 08/06", method:"Boleto / linha digitável", payee:"MAPFRE Consórcio", source:"Gmail MAPFRE + print iPhone 05/06", priority:16, codes:[ {label:"Linha digitável / boleto", value:"23793.55205 40000.430203 88000.131107 6 14710000179439"} ], note:"Email de 01/06 confirmou grupo 5034, cota 1143, vencimento 08/06/2026 e R$ 1.794,39." },
+    { id:"claro-junho-1006", title:"Claro — junho", category:"Serviços", group:"junho", paymentState:"unknown", due:"2026-06-10", amount:99.54, status:"Vence em 10/06", method:"PIX ou código de barras", payee:"Claro S/A", source:"Gmail Fatura Claro 06/06", priority:17, codes:[ {label:"PIX copia e cola", value:"00020101021126580014br.gov.bcb.pix01362b946329-3dd9-4237-9897-658af92371ef520400005303986540599.545802BR5909Claro S/A6014RIO DE JANEIRO62270523063118038000004071400256304C96F"}, {label:"Código de barras", value:"846000000006995401622023606100380009004071400255"} ], note:"Fatura digital de 06/06/2026, vencimento 10/06, R$ 99,54, PIX ou código de barras." },
+    { id:"rhanna-1006", title:"Condomínio RHANNA", category:"Condomínio", group:"sem-codigo", paymentState:"unknown", due:"2026-06-10", amount:1210.05, status:"Vence em 10/06", method:"Boleto por link", payee:"PERSONAL PRIME ADM OBJETIVA", source:"Gmail RHANNA 29/05 e 07/06", priority:18, codes:[], note:"Boleto emitido em 29/05 e reenviado em 07/06. R$ 1.210,05, acesso por link da Superlógica." },
+    { id:"btg-cartao-1106", title:"BTG Pactual Empresas — fatura cartão", category:"Cartões", group:"junho", paymentState:"unknown", due:"2026-06-11", amount:3848.84, status:"Vence em 11/06", method:"App BTG ou boleto na fatura", payee:"BTG Pactual Empresas", source:"Gmail BTG Empresas 07/06", priority:19, codes:[], note:"Fatura fechada em 07/06 com total de R$ 3.848,84 e mínimo de R$ 632,98. Pagamento no app ou boleto anexo." }
+  ];
+
+  const currency = new Intl.NumberFormat("pt-BR",{style:"currency",currency:"BRL"});
+  const dateFormat = new Intl.DateTimeFormat("pt-BR",{day:"2-digit",month:"2-digit",year:"numeric"});
+  const today = "2026-06-09";
+
+  const els = {
+    list: document.querySelector("[data-list]"),
+    search: document.querySelector("[data-search]"),
+    sort: document.querySelector("[data-sort]"),
+    chips: [...document.querySelectorAll("[data-tab]")],
+    toast: document.querySelector("[data-toast]"),
+    heroTotal: document.querySelector("[data-hero-total]"),
+    heroSub: document.querySelector("[data-hero-sub]"),
+    focusList: document.querySelector("[data-focus-list]")
+  };
+  let activeTab = "all";
+
+  const parseDate = v => new Date(v + "T12:00:00");
+  const formatDate = v => dateFormat.format(parseDate(v));
+  const amountText = a => a === null ? "A confirmar" : currency.format(a);
+  const compactBRL = a => a >= 1000 ? "R$ " + (a/1000).toLocaleString("pt-BR",{minimumFractionDigits:1,maximumFractionDigits:1}) + "k" : currency.format(a);
+  const hasCode = b => b.codes && b.codes.length > 0;
+  function isPaid(id){ const b = bills.find(x=>x.id===id); return b && (b.paymentState==="paid" || localStorage.getItem("bill-paid-"+id)==="1"); }
+  function setPaid(id,v){ localStorage.setItem("bill-paid-"+id, v?"1":"0"); render(); }
+  const dayDiff = due => Math.round((parseDate(due)-parseDate(today))/86400000);
+  function urgency(b){ const d=dayDiff(b.due);
+    if(d<0) return {text:"Vencida",cls:"red",card:"overdue"};
+    if(d===0) return {text:"Hoje",cls:"amber",card:"due"};
+    if(d<=7) return {text:"Próxima",cls:"blue",card:"pending"};
+    return {text:"Futura",cls:"green",card:"future"}; }
+
+  function tabMatch(b){
+    if(activeTab==="all") return true;
+    if(activeTab==="focus") return hasCode(b)&&dayDiff(b.due)<=0&&!isPaid(b.id);
+    if(activeTab==="pago") return isPaid(b.id);
+    if(activeTab==="sem-informar-pago") return !isPaid(b.id);
+    if(activeTab==="vencidas") return dayDiff(b.due)<=0&&!isPaid(b.id);
+    if(activeTab==="junho") return b.due.startsWith("2026-06");
+    if(activeTab==="sem-codigo") return !hasCode(b);
+    if(activeTab==="acordos") return b.category.includes("Acord")||b.group==="acordos";
+    return true;
+  }
+  function searchMatch(b){
+    const q = els.search.value.trim().toLowerCase();
+    if(!q) return true;
+    return [b.title,b.category,b.status,b.method,b.payee,b.source,b.note,amountText(b.amount),formatDate(b.due),...(b.codes||[]).map(c=>c.value)].join(" ").toLowerCase().includes(q);
+  }
+  function getVisibleBills(){
+    const visible = bills.filter(tabMatch).filter(searchMatch);
+    const sort = els.sort.value;
+    visible.sort((a,b)=>{
+      if(sort==="amount") return (b.amount||0)-(a.amount||0);
+      if(sort==="category") return a.category.localeCompare(b.category)||a.priority-b.priority;
+      return parseDate(a.due)-parseDate(b.due)||a.priority-b.priority;
+    });
+    return visible;
+  }
+  async function copyText(text,label){
+    try{ await navigator.clipboard.writeText(text); }
+    catch{ const t=document.createElement("textarea"); t.value=text; document.body.appendChild(t); t.select(); document.execCommand("copy"); t.remove(); }
+    showToast(label+" copiado ✓");
+  }
+  function showToast(msg){ els.toast.textContent=msg; els.toast.classList.add("show"); clearTimeout(window.tt); window.tt=setTimeout(()=>els.toast.classList.remove("show"),1800); }
+  function escapeHtml(s){ return String(s).replace(/[&<>"]/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;"}[c])); }
+
+  function renderSummary(){
+    const open = bills.filter(b=>!isPaid(b.id));
+    const payableNow = open.filter(b=>hasCode(b)&&dayDiff(b.due)<=0);
+    const overdue = open.filter(b=>dayDiff(b.due)<0);
+    const juneKnown = open.filter(b=>b.due.startsWith("2026-06")&&b.amount!==null);
+    const totalOpen = open.reduce((s,b)=>s+(b.amount||0),0);
+    const set=(sel,v)=>{const e=document.querySelector(sel); if(e) e.textContent=v;};
+    set("[data-kpi-payable]",compactBRL(payableNow.reduce((s,b)=>s+(b.amount||0),0))); set("[data-kpi-payable-ct]",payableNow.length+" item(ns)");
+    set("[data-kpi-overdue]",compactBRL(overdue.reduce((s,b)=>s+(b.amount||0),0))); set("[data-kpi-overdue-ct]",overdue.length+" item(ns)");
+    set("[data-kpi-open]",compactBRL(totalOpen)); set("[data-kpi-open-ct]",open.length+" item(ns)");
+    set("[data-kpi-june]",compactBRL(juneKnown.reduce((s,b)=>s+(b.amount||0),0))); set("[data-kpi-june-ct]",juneKnown.length+" item(ns)");
+    els.heroTotal.textContent = currency.format(totalOpen);
+    const semCodigo = open.filter(b=>!hasCode(b)).length;
+    els.heroSub.innerHTML = `<b>${open.length}</b> contas em aberto · <b>${overdue.length}</b> vencidas · <b>${semCodigo}</b> sem código · atualizado 09/06/2026`;
+  }
+  function renderFocus(){
+    const focus = bills.filter(b=>hasCode(b)&&dayDiff(b.due)<=0&&!isPaid(b.id)).sort((a,b)=>parseDate(a.due)-parseDate(b.due)||a.priority-b.priority);
+    els.focusList.innerHTML = focus.map(b=>`<li><b>${escapeHtml(b.title)} · ${amountText(b.amount)}</b><span>vence ${formatDate(b.due)} · ${escapeHtml(b.method)}</span></li>`).join("") || `<li><b>Nada com código em aberto</b><span>Veja a aba "Sem código" para pendências.</span></li>`;
+  }
+  function groupVisibleBills(visible){
+    const groups = [
+      ["Pagar agora · com código", b=>hasCode(b)&&dayDiff(b.due)<=0&&!isPaid(b.id)],
+      ["Sem código para pagar agora", b=>!hasCode(b)&&dayDiff(b.due)<=0&&!isPaid(b.id)],
+      ["Junho em aberto", b=>b.due.startsWith("2026-06")&&dayDiff(b.due)>0&&!isPaid(b.id)],
+      ["Outros controles", b=>!b.due.startsWith("2026-06")&&dayDiff(b.due)>0&&!isPaid(b.id)],
+      ["Pagas / informadas como pagas", b=>isPaid(b.id)]
+    ];
+    return groups.map(([t,p])=>[t,visible.filter(p)]).filter(([,i])=>i.length>0);
+  }
+  function renderList(){
+    const visible = getVisibleBills();
+    if(!visible.length){ els.list.innerHTML = `<div class="empty">Nenhuma conta encontrada com esses filtros.</div>`; return; }
+    const groups = groupVisibleBills(visible);
+    els.list.innerHTML = groups.map(([title,items])=>`
+      <div class="section-h"><span>${title}</span><span class="ct">${items.length} item(ns)</span></div>
+      <div class="cards">${items.map(renderCard).join("")}</div>`).join("");
+  }
+  function renderCard(b){
+    const u = urgency(b); const paid = isPaid(b.id);
+    const codeHtml = hasCode(b)
+      ? b.codes.map((code,i)=>`<div class="codebox"><div class="codebar"><b>${escapeHtml(code.label)}</b><button class="btn mini" type="button" data-copy="${b.id}::${i}">Copiar</button></div><pre class="code">${escapeHtml(code.value)}</pre></div>`).join("")
+      : `<div class="codebox"><div class="nocode">Sem código copiável localizado — veja a nota abaixo.</div></div>`;
+    return `<article class="card ${u.card} ${paid?"paidcard":""}" data-card="${b.id}">
+      <div class="accent"></div>
+      <div class="card-head">
+        <div class="h-main">
+          <h3>${escapeHtml(b.title)}</h3>
+          <div class="meta">
+            <span class="pill ${u.cls}">${u.text}</span>
+            <span class="pill">${escapeHtml(b.category)}</span>
+            <span class="pill ${hasCode(b)?"green":"amber"}">${hasCode(b)?"Com código":"Sem código"}</span>
+            ${paid?`<span class="pill green">Paga</span>`:""}
+          </div>
+        </div>
+        <div class="amount"><strong>${amountText(b.amount)}</strong><small>vence ${formatDate(b.due)}</small></div>
+      </div>
+      <div class="detail-grid">
+        <div class="detail"><label>Forma</label><b>${escapeHtml(b.method)}</b></div>
+        <div class="detail"><label>Favorecido</label><b>${escapeHtml(b.payee)}</b></div>
+        <div class="detail"><label>Fonte</label><b>${escapeHtml(b.source)}</b></div>
+        <div class="detail"><label>Status</label><b>${escapeHtml(b.status)}</b></div>
+      </div>
+      ${codeHtml}
+      <p class="note">${escapeHtml(b.note)}</p>
+      <div class="card-actions">
+        <label class="check"><input type="checkbox" ${paid?"checked":""} ${b.paymentState==="paid"?"disabled":""} data-paid="${b.id}"> Marcar como pago</label>
+        ${hasCode(b)?`<button class="btn mini" type="button" data-copy-all="${b.id}">Copiar tudo</button>`:""}
+      </div>
+    </article>`;
+  }
+  function bindDynamicActions(){
+    document.querySelectorAll("[data-copy]").forEach(btn=>btn.addEventListener("click",()=>{
+      const [id,i]=btn.dataset.copy.split("::"); const b=bills.find(x=>x.id===id); const code=b.codes[Number(i)]; copyText(code.value,code.label);
+    }));
+    document.querySelectorAll("[data-copy-all]").forEach(btn=>btn.addEventListener("click",()=>{
+      const b=bills.find(x=>x.id===btn.dataset.copyAll);
+      copyText([b.title,amountText(b.amount),"Vencimento: "+formatDate(b.due),"Favorecido: "+b.payee,...b.codes.map(c=>c.label+": "+c.value)].join("\n"),"Dados da conta");
+    }));
+    document.querySelectorAll("[data-paid]").forEach(inp=>inp.addEventListener("change",()=>setPaid(inp.dataset.paid,inp.checked)));
+  }
+  function render(){ renderSummary(); renderFocus(); renderList(); bindDynamicActions(); }
+
+  els.chips.forEach(chip=>chip.addEventListener("click",()=>{
+    activeTab=chip.dataset.tab; els.chips.forEach(c=>c.setAttribute("aria-selected",String(c===chip))); render();
+  }));
+  [els.search,els.sort].forEach(el=>el.addEventListener("input",render));
+  document.querySelector("[data-copy-focus]").addEventListener("click",()=>{
+    const focus = bills.filter(b=>hasCode(b)&&dayDiff(b.due)<=0&&!isPaid(b.id)).sort((a,b)=>parseDate(a.due)-parseDate(b.due)||a.priority-b.priority)
+      .map(b=>[b.title+" | "+amountText(b.amount),"Vencimento: "+formatDate(b.due),"Favorecido: "+b.payee,...b.codes.map(c=>c.label+": "+c.value)].join("\n")).join("\n\n");
+    copyText(focus||"Sem contas com código abertas no modo foco.","Modo foco");
+  });
+
+  function detectDevice(){
+    const ua = navigator.userAgent || "";
+    const isiPhone=/iPhone|iPod/.test(ua);
+    const isiPad=/iPad/.test(ua)||(/Macintosh/.test(ua)&&navigator.maxTouchPoints>1);
+    const isAndroid=/Android/.test(ua);
+    const isMac=/Macintosh/.test(ua)&&!isiPad;
+    const wide = window.matchMedia("(min-width:900px)").matches;
+    let name,ico;
+    if(isiPhone){name="iPhone";ico="📱";}
+    else if(isiPad){name="iPad";ico="📱";}
+    else if(isAndroid){name="Android";ico="📱";}
+    else if(isMac){name="Mac";ico="💻";}
+    else {name="Desktop";ico="🖥️";}
+    const mode = wide ? "layout desktop" : "tela cheia";
+    const set=(s,v)=>{const e=document.querySelector(s); if(e) e.textContent=v;};
+    set("[data-device-name]",name); set("[data-device-ico]",ico); set("[data-device-mode]",mode);
+  }
+  detectDevice();
+  window.matchMedia("(min-width:900px)").addEventListener?.("change",detectDevice);
+  window.addEventListener("resize",detectDevice);
+
+  render();
+</script>
+</body>
+</html>

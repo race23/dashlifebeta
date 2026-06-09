@@ -1,0 +1,596 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,maximum-scale=1">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="theme-color" content="#080808" media="(prefers-color-scheme: dark)">
+<meta name="theme-color" content="#f2f2f7" media="(prefers-color-scheme: light)">
+<title>DashLife · Visão Geral</title>
+<style>
+  /* =========================================================
+     DARK THEME (default) — fundo profundo, glass escuro
+     ========================================================= */
+  :root, [data-theme="dark"]{
+    --bg:#080808;
+    --bg-grad-1:#0c0c10;
+    --bg-grad-2:#080808;
+    --surface:rgba(28,28,30,0.72);
+    --surface-2:rgba(44,44,46,0.6);
+    --surface-solid:#1c1c1e;
+    --glass-bg:rgba(20,20,22,0.55);
+    --glass-bg-strong:rgba(14,14,16,0.78);
+    --hairline:rgba(255,255,255,0.08);
+    --hairline-strong:rgba(255,255,255,0.14);
+    --inner-highlight:rgba(255,255,255,0.06);
+    --text:#f5f5f7;
+    --t2:#a8a8ad;
+    --t3:#6e6e73;
+    --t4:#3a3a3c;
+    --shadow:0 20px 60px rgba(0,0,0,.55), 0 2px 6px rgba(0,0,0,.4);
+    --shadow-soft:0 10px 30px rgba(0,0,0,.35);
+
+    --gold:#d4b87a; --gold-tint:rgba(212,184,122,0.14); --gold-tint-2:rgba(212,184,122,0.06);
+    --green:#5fd49d; --green-tint:rgba(95,212,157,0.16);
+    --red:#ff6b6b; --red-tint:rgba(255,107,107,0.16);
+    --amber:#e8a661; --amber-tint:rgba(232,166,97,0.16);
+    --blue:#6aa4ff; --blue-tint:rgba(106,164,255,0.16);
+    --purple:#b48dff; --purple-tint:rgba(180,141,255,0.16);
+    --teal:#5fcfd9; --teal-tint:rgba(95,207,217,0.16);
+
+    /* squircle-ish radii */
+    --r-xs:10px; --r-sm:14px; --r-md:20px; --r-lg:28px; --r-xl:34px; --r-pill:999px;
+    --tab-h:64px;
+  }
+
+  /* =========================================================
+     LIGHT THEME — cinza-quente da Apple, glass branco
+     ========================================================= */
+  [data-theme="light"]{
+    --bg:#f2f2f7;
+    --bg-grad-1:#f7f6f3;
+    --bg-grad-2:#eeeef2;
+    --surface:rgba(255,255,255,0.82);
+    --surface-2:rgba(255,255,255,0.62);
+    --surface-solid:#ffffff;
+    --glass-bg:rgba(255,255,255,0.72);
+    --glass-bg-strong:rgba(255,255,255,0.88);
+    --hairline:rgba(0,0,0,0.07);
+    --hairline-strong:rgba(0,0,0,0.12);
+    --inner-highlight:rgba(255,255,255,0.9);
+    --text:#1d1d1f;
+    --t2:#3a3a3c;
+    --t3:#6e6e73;
+    --t4:#c7c7cc;
+    --shadow:0 20px 60px rgba(20,20,30,.10), 0 2px 6px rgba(20,20,30,.05);
+    --shadow-soft:0 8px 24px rgba(20,20,30,.08);
+
+    --gold:#a8854c; --gold-tint:rgba(168,133,76,0.12); --gold-tint-2:rgba(168,133,76,0.05);
+    --green:#1f9d62; --green-tint:rgba(31,157,98,0.12);
+    --red:#d63b3b; --red-tint:rgba(214,59,59,0.12);
+    --amber:#b87420; --amber-tint:rgba(184,116,32,0.12);
+    --blue:#1d6fdf; --blue-tint:rgba(29,111,223,0.12);
+    --purple:#7b50d4; --purple-tint:rgba(123,80,212,0.12);
+    --teal:#16949e; --teal-tint:rgba(22,148,158,0.12);
+  }
+
+  *{box-sizing:border-box;-webkit-tap-highlight-color:transparent;-webkit-user-select:none;user-select:none}
+  html,body{margin:0;padding:0;background:#000;color:var(--text);font-family:-apple-system,BlinkMacSystemFont,'SF Pro Display','SF Pro Text','Segoe UI',system-ui,sans-serif;font-size:16px;line-height:1.45;min-height:100vh;overscroll-behavior:none;-webkit-font-smoothing:antialiased}
+
+  /* DESKTOP FRAME — iPhone 16-style (no notch, Dynamic Island) */
+  .device{
+    background:
+      radial-gradient(120% 80% at 80% 0%, var(--gold-tint) 0%, transparent 60%),
+      radial-gradient(100% 70% at 0% 100%, var(--purple-tint) 0%, transparent 55%),
+      linear-gradient(180deg, var(--bg-grad-1), var(--bg-grad-2));
+    min-height:100vh;position:relative;overflow:hidden;
+    transition:background .35s ease;
+  }
+  @media (min-width:520px){
+    body{display:flex;align-items:flex-start;justify-content:center;padding:32px;background:#0a0a0a}
+    [data-theme="light"] body, body[data-host="light"]{background:#e8e8ed}
+    .device{
+      width:393px;height:852px;
+      border-radius:55px;
+      border:11px solid #0f0f10;
+      box-shadow:0 40px 120px rgba(0,0,0,.7), inset 0 0 0 2px #1b1b1d;
+      overflow:hidden;flex-shrink:0;
+    }
+    /* Dynamic Island */
+    .device::before{
+      content:'';position:absolute;top:13px;left:50%;transform:translateX(-50%);
+      width:122px;height:35px;background:#000;border-radius:99px;z-index:400;
+    }
+    .desktop-hint{
+      position:fixed;top:32px;left:32px;color:#6e6e73;font-size:12px;
+      max-width:240px;line-height:1.6;font-family:-apple-system,BlinkMacSystemFont,sans-serif;
+    }
+    .desktop-hint strong{display:block;margin-bottom:4px;font-size:11px;letter-spacing:1.5px;text-transform:uppercase;color:#a8854c}
+  }
+  @media (max-width:519px){ .desktop-hint{display:none} }
+
+  /* SAFE AREAS */
+  :root{
+    --safe-top:env(safe-area-inset-top, 0px);
+    --safe-bottom:env(safe-area-inset-bottom, 0px);
+  }
+
+  /* =========================================================
+     TOPBAR — Liquid Glass, sticky
+     ========================================================= */
+  .topbar{
+    position:sticky;top:0;z-index:100;
+    background:var(--glass-bg);
+    backdrop-filter:saturate(180%) blur(28px);
+    -webkit-backdrop-filter:saturate(180%) blur(28px);
+    border-bottom:0.5px solid var(--hairline);
+    padding:calc(var(--safe-top) + 14px) 20px 12px;
+    display:flex;align-items:center;gap:12px;
+  }
+  .topbar-logo{font-size:13px;font-weight:700;letter-spacing:.3px;color:var(--text)}
+  .topbar-logo span{color:var(--gold)}
+  .topbar-badge{
+    background:var(--gold-tint);border:0.5px solid var(--gold-tint);
+    color:var(--gold);font-size:9.5px;letter-spacing:1.3px;text-transform:uppercase;
+    padding:3px 7px;border-radius:6px;font-weight:700;
+  }
+  .topbar-spacer{flex:1}
+  .topbar-date{font-size:11px;color:var(--t3);text-align:right;line-height:1.25;font-feature-settings:"tnum"}
+  .topbar-date b{display:block;color:var(--t2);font-weight:500;font-size:12px}
+  .pulse{width:7px;height:7px;border-radius:50%;background:var(--green);box-shadow:0 0 10px var(--green-tint);animation:pulse 2.4s ease-in-out infinite}
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.45;transform:scale(.85)}}
+
+  .theme-toggle{
+    appearance:none;border:0.5px solid var(--hairline-strong);
+    background:var(--surface);backdrop-filter:blur(20px);-webkit-backdrop-filter:blur(20px);
+    width:34px;height:34px;border-radius:var(--r-pill);
+    display:flex;align-items:center;justify-content:center;cursor:pointer;
+    color:var(--text);font-size:15px;
+    transition:all .25s ease;
+  }
+  .theme-toggle:active{transform:scale(.92)}
+  .theme-toggle .icon-sun{display:none}
+  .theme-toggle .icon-moon{display:block}
+  [data-theme="light"] .theme-toggle .icon-sun{display:block}
+  [data-theme="light"] .theme-toggle .icon-moon{display:none}
+
+  /* =========================================================
+     SCROLL AREA
+     ========================================================= */
+  .scroll{
+    padding:0 18px calc(var(--tab-h) + var(--safe-bottom) + 60px);
+    overflow-y:auto;-webkit-overflow-scrolling:touch;
+  }
+  @media (min-width:520px){
+    .scroll{height:calc(852px - 0px);overflow-y:auto}
+    .scroll::-webkit-scrollbar{width:0}
+  }
+
+  /* =========================================================
+     LARGE TITLE (iOS style)
+     ========================================================= */
+  .large-title{
+    padding:18px 4px 4px;
+  }
+  .large-title .eyebrow{
+    font-size:11px;letter-spacing:.5px;color:var(--t3);font-weight:500;text-transform:none;
+    margin-bottom:2px;
+  }
+  .large-title h1{
+    margin:0;font-size:34px;font-weight:800;letter-spacing:-1.2px;line-height:1.05;
+    font-family:-apple-system,'SF Pro Display',BlinkMacSystemFont,sans-serif;
+  }
+  .large-title h1 span{color:var(--gold)}
+
+  /* =========================================================
+     HERO CARD — glass com depth
+     ========================================================= */
+  .hero{
+    margin:18px 0 22px;
+    background:
+      linear-gradient(135deg, var(--gold-tint) 0%, transparent 55%),
+      var(--surface);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);
+    border-radius:var(--r-lg);
+    padding:18px 20px;
+    box-shadow:var(--shadow-soft);
+    position:relative;overflow:hidden;
+  }
+  .hero::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    box-shadow:inset 0 1px 0 var(--inner-highlight);
+  }
+  .hero-row{display:flex;align-items:center;gap:14px}
+  .hero-glyph{
+    width:52px;height:52px;border-radius:var(--r-md);
+    background:linear-gradient(135deg, var(--gold), #b89559);
+    display:flex;align-items:center;justify-content:center;
+    font-size:24px;color:#fff;flex-shrink:0;
+    box-shadow:0 6px 18px var(--gold-tint), inset 0 1px 0 rgba(255,255,255,.3);
+  }
+  .hero-info{flex:1;min-width:0}
+  .hero-eyebrow{font-size:11px;letter-spacing:.4px;color:var(--t3);font-weight:500}
+  .hero-title{font-size:18px;font-weight:700;letter-spacing:-.4px;line-height:1.2;margin-top:1px}
+  .hero-sub{font-size:12.5px;color:var(--t3);margin-top:10px;line-height:1.4}
+
+  /* =========================================================
+     KPI GRID — glass cards squircle
+     ========================================================= */
+  .kpi-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-bottom:24px}
+  .kpi{
+    background:var(--surface);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);
+    border-radius:var(--r-md);
+    padding:14px 16px;min-height:96px;
+    display:flex;flex-direction:column;justify-content:space-between;
+    box-shadow:var(--shadow-soft);
+    position:relative;overflow:hidden;
+  }
+  .kpi::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    box-shadow:inset 0 1px 0 var(--inner-highlight);
+  }
+  .kpi .lbl{font-size:11px;letter-spacing:.2px;color:var(--t3);font-weight:500}
+  .kpi .val{
+    font-size:28px;font-weight:700;letter-spacing:-.8px;line-height:1;
+    font-family:-apple-system,'SF Pro Display',BlinkMacSystemFont,sans-serif;
+    font-feature-settings:"tnum";
+  }
+  .kpi .val small{font-size:14px;color:var(--t3);font-weight:500;margin-left:2px;letter-spacing:0}
+  .kpi .sub{font-size:11.5px;color:var(--t3);margin-top:4px}
+  .kpi.gold .val{color:var(--gold)}
+  .kpi.green .val{color:var(--green)}
+  .kpi.red .val{color:var(--red)}
+  .kpi.teal .val{color:var(--teal)}
+
+  /* =========================================================
+     CTA Modo Foco — glass com gradient sutil
+     ========================================================= */
+  .foco-cta{
+    background:
+      linear-gradient(135deg, var(--gold-tint) 0%, var(--gold-tint-2) 100%),
+      var(--surface);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--gold-tint);
+    border-radius:var(--r-md);
+    padding:16px 18px;margin-bottom:26px;
+    display:flex;align-items:center;gap:14px;
+    box-shadow:var(--shadow-soft);
+    position:relative;overflow:hidden;
+  }
+  .foco-cta::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    box-shadow:inset 0 1px 0 var(--inner-highlight);
+  }
+  .foco-cta .ico{
+    width:46px;height:46px;border-radius:var(--r-sm);
+    background:linear-gradient(135deg, var(--gold), #b89559);
+    color:#fff;display:flex;align-items:center;justify-content:center;
+    font-size:22px;flex-shrink:0;
+    box-shadow:0 4px 12px var(--gold-tint), inset 0 1px 0 rgba(255,255,255,.3);
+  }
+  .foco-cta .txt{flex:1;line-height:1.3}
+  .foco-cta .txt b{display:block;color:var(--text);font-size:15px;font-weight:600;letter-spacing:-.2px}
+  .foco-cta .txt span{font-size:12px;color:var(--t3)}
+  .foco-cta .arrow{
+    color:var(--gold);font-size:20px;opacity:.8;
+    width:28px;height:28px;border-radius:var(--r-pill);
+    background:var(--gold-tint);display:flex;align-items:center;justify-content:center;
+  }
+
+  /* =========================================================
+     SECTION HEADERS
+     ========================================================= */
+  .section-h{
+    font-size:12.5px;color:var(--t2);font-weight:600;letter-spacing:-.1px;
+    margin:8px 4px 12px;
+    display:flex;align-items:center;justify-content:space-between;
+  }
+  .section-h a{color:var(--gold);text-decoration:none;font-size:13px;font-weight:500}
+
+  /* =========================================================
+     AREAS LIST — list group iOS style
+     ========================================================= */
+  .area-group{
+    background:var(--surface);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);
+    border-radius:var(--r-md);
+    overflow:hidden;
+    box-shadow:var(--shadow-soft);
+    margin-bottom:24px;
+  }
+  .area{
+    padding:14px 16px;
+    border-bottom:0.5px solid var(--hairline);
+  }
+  .area:last-child{border-bottom:0}
+  .area-h{display:flex;align-items:center;gap:12px;margin-bottom:10px}
+  .area-h .ico{
+    width:34px;height:34px;border-radius:var(--r-sm);
+    display:flex;align-items:center;justify-content:center;
+    font-size:16px;flex-shrink:0;
+  }
+  .area-h .ttl{font-size:14.5px;font-weight:600;flex:1;letter-spacing:-.2px}
+  .area-h .pct{font-size:14px;font-weight:700;font-feature-settings:"tnum"}
+  .area-bar{height:5px;background:var(--t4);border-radius:99px;overflow:hidden;opacity:.5}
+  [data-theme="light"] .area-bar{background:#e5e5ea;opacity:1}
+  .area-fill{height:100%;border-radius:99px;transition:width .9s cubic-bezier(.4,0,.2,1)}
+  .area-sub{font-size:12px;color:var(--t3);margin-top:8px;line-height:1.45}
+
+  /* =========================================================
+     QUICK ATALHOS — squircle cards
+     ========================================================= */
+  .quick-grid{display:grid;grid-template-columns:1fr 1fr;gap:11px;margin-top:8px}
+  .quick{
+    background:var(--surface);
+    backdrop-filter:saturate(180%) blur(20px);
+    -webkit-backdrop-filter:saturate(180%) blur(20px);
+    border:0.5px solid var(--hairline);
+    border-radius:var(--r-md);
+    padding:16px;
+    box-shadow:var(--shadow-soft);
+    position:relative;overflow:hidden;
+    min-height:116px;
+    display:flex;flex-direction:column;justify-content:space-between;
+  }
+  .quick::before{
+    content:'';position:absolute;inset:0;border-radius:inherit;pointer-events:none;
+    box-shadow:inset 0 1px 0 var(--inner-highlight);
+  }
+  .quick .ico{
+    width:38px;height:38px;border-radius:var(--r-sm);
+    display:flex;align-items:center;justify-content:center;
+    font-size:18px;margin-bottom:10px;
+  }
+  .quick .ttl{font-size:14px;font-weight:600;line-height:1.25;letter-spacing:-.2px}
+  .quick .desc{font-size:11.5px;color:var(--t3);margin-top:3px;line-height:1.4}
+
+  /* =========================================================
+     FLOATING TAB BAR — Liquid Glass pill (iOS 26 signature)
+     ========================================================= */
+  .tabbar{
+    position:fixed;left:16px;right:16px;
+    bottom:calc(var(--safe-bottom) + 14px);
+    height:var(--tab-h);
+    background:var(--glass-bg-strong);
+    backdrop-filter:saturate(200%) blur(36px);
+    -webkit-backdrop-filter:saturate(200%) blur(36px);
+    border:0.5px solid var(--hairline-strong);
+    border-radius:var(--r-pill);
+    display:flex;
+    z-index:200;
+    box-shadow:
+      0 20px 50px rgba(0,0,0,.45),
+      0 6px 20px rgba(0,0,0,.25),
+      inset 0 1px 0 var(--inner-highlight);
+  }
+  [data-theme="light"] .tabbar{
+    box-shadow:
+      0 20px 50px rgba(20,20,30,.14),
+      0 6px 20px rgba(20,20,30,.08),
+      inset 0 1px 0 rgba(255,255,255,.9);
+  }
+  @media (min-width:520px){
+    .tabbar{position:absolute;left:14px;right:14px}
+  }
+  .tab{
+    flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    gap:2px;cursor:pointer;color:var(--t3);position:relative;
+    border-radius:var(--r-pill);
+    transition:color .25s ease;
+  }
+  .tab .ico{font-size:20px;line-height:1}
+  .tab .lbl{font-size:10px;font-weight:500;letter-spacing:.1px}
+  .tab.active{color:var(--gold)}
+  .tab.active .ico{
+    transform:translateY(-1px);
+    filter:drop-shadow(0 2px 4px var(--gold-tint));
+  }
+  .tab .badge{
+    position:absolute;top:8px;right:calc(50% - 20px);
+    background:var(--red);color:#fff;font-size:9px;font-weight:700;
+    min-width:16px;height:16px;border-radius:99px;
+    display:flex;align-items:center;justify-content:center;padding:0 4px;line-height:1;
+    box-shadow:0 2px 6px rgba(0,0,0,.3);
+  }
+</style>
+</head>
+<body>
+
+<div class="desktop-hint">
+  <strong>Preview iOS 26</strong>
+  Liquid Glass: tab bar flutuante em pílula, cantos contínuos, materiais translúcidos. Toque o ícone ☀️ / ☾ na barra superior pra alternar tema.
+</div>
+
+<div class="device" id="device">
+
+  <!-- TOPBAR -->
+  <header class="topbar">
+    <div class="topbar-logo">DASH<span>LIFE</span></div>
+    <span class="topbar-badge">v12</span>
+    <div class="topbar-spacer"></div>
+    <div class="pulse"></div>
+    <div class="topbar-date">
+      <b>15 mai</b>
+      <span>tudo salvo</span>
+    </div>
+    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Alternar tema">
+      <span class="icon-moon">☾</span>
+      <span class="icon-sun">☀︎</span>
+    </button>
+  </header>
+
+  <!-- CONTEÚDO -->
+  <main class="scroll">
+
+    <!-- LARGE TITLE -->
+    <div class="large-title">
+      <div class="eyebrow">Bom dia, Renan</div>
+      <h1>Visão <span>Geral</span></h1>
+    </div>
+
+    <!-- HERO -->
+    <section class="hero">
+      <div class="hero-row">
+        <div class="hero-glyph">⌘</div>
+        <div class="hero-info">
+          <div class="hero-eyebrow">Situação Operacional</div>
+          <div class="hero-title">Sexta-feira, 15 mai 2026</div>
+        </div>
+      </div>
+      <div class="hero-sub">3 decisões na mesa · 5 obrigações financeiras · Foco em treino</div>
+    </section>
+
+    <!-- KPIs -->
+    <div class="kpi-grid">
+      <div class="kpi gold">
+        <div class="lbl">Foco hoje</div>
+        <div>
+          <div class="val">47<small>min</small></div>
+          <div class="sub">+12 vs ontem</div>
+        </div>
+      </div>
+      <div class="kpi red">
+        <div class="lbl">Decisões hoje</div>
+        <div>
+          <div class="val">3</div>
+          <div class="sub">1 concluída</div>
+        </div>
+      </div>
+      <div class="kpi teal">
+        <div class="lbl">Saúde / Coach</div>
+        <div>
+          <div class="val">82<small>/100</small></div>
+          <div class="sub">índice diário</div>
+        </div>
+      </div>
+      <div class="kpi green">
+        <div class="lbl">Em aberto</div>
+        <div>
+          <div class="val" style="font-size:22px">R$ 14,7k</div>
+          <div class="sub">5 obrigações</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- CTA Modo Foco -->
+    <div class="foco-cta">
+      <div class="ico">🎯</div>
+      <div class="txt">
+        <b>Entrar no Modo Foco</b>
+        <span>Comece o dia com clareza</span>
+      </div>
+      <div class="arrow">›</div>
+    </div>
+
+    <!-- ÁREAS (lista agrupada estilo iOS) -->
+    <div class="section-h">
+      <span>Áreas</span>
+      <a href="#">Ver todas</a>
+    </div>
+
+    <div class="area-group">
+      <div class="area">
+        <div class="area-h">
+          <div class="ico" style="background:var(--green-tint);color:var(--green)">💰</div>
+          <div class="ttl">Financeiro</div>
+          <div class="pct" style="color:var(--green)">68%</div>
+        </div>
+        <div class="area-bar"><div class="area-fill" style="width:68%;background:linear-gradient(90deg,var(--green),#8be4b8)"></div></div>
+        <div class="area-sub">2 obrigações vencendo esta semana · R$ 11,2k pagos no mês</div>
+      </div>
+      <div class="area">
+        <div class="area-h">
+          <div class="ico" style="background:var(--teal-tint);color:var(--teal)">🩺</div>
+          <div class="ttl">Saúde &amp; Performance</div>
+          <div class="pct" style="color:var(--teal)">82%</div>
+        </div>
+        <div class="area-bar"><div class="area-fill" style="width:82%;background:linear-gradient(90deg,var(--teal),#8be0e8)"></div></div>
+        <div class="area-sub">Sono 7h12 · Energia alta · Próxima consulta: Dr. Meyer</div>
+      </div>
+      <div class="area">
+        <div class="area-h">
+          <div class="ico" style="background:var(--purple-tint);color:var(--purple)">⚖️</div>
+          <div class="ttl">Jurídico</div>
+          <div class="pct" style="color:var(--purple)">44%</div>
+        </div>
+        <div class="area-bar"><div class="area-fill" style="width:44%;background:linear-gradient(90deg,var(--purple),#cbb0ff)"></div></div>
+        <div class="area-sub">14 processos ativos · 1 audiência marcada</div>
+      </div>
+    </div>
+
+    <!-- ATALHOS -->
+    <div class="section-h"><span>Atalhos rápidos</span></div>
+
+    <div class="quick-grid">
+      <div class="quick">
+        <div>
+          <div class="ico" style="background:var(--teal-tint);color:var(--teal)">🩺</div>
+          <div class="ttl">Saúde de hoje</div>
+          <div class="desc">Sono, energia, humor, treino</div>
+        </div>
+      </div>
+      <div class="quick">
+        <div>
+          <div class="ico" style="background:var(--red-tint);color:var(--red)">🎯</div>
+          <div class="ttl">Decisões hoje</div>
+          <div class="desc">3 decisões na mesa</div>
+        </div>
+      </div>
+      <div class="quick">
+        <div>
+          <div class="ico" style="background:var(--green-tint);color:var(--green)">💰</div>
+          <div class="ttl">Financeiro</div>
+          <div class="desc">5 obrigações · R$ 14,7k</div>
+        </div>
+      </div>
+      <div class="quick">
+        <div>
+          <div class="ico" style="background:var(--amber-tint);color:var(--amber)">📎</div>
+          <div class="ttl">Anexos</div>
+          <div class="desc">Comprovantes e documentos</div>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <!-- FLOATING TAB BAR -->
+  <nav class="tabbar">
+    <div class="tab"><div class="ico">🎯</div><div class="lbl">Foco</div></div>
+    <div class="tab active"><div class="ico">◐</div><div class="lbl">Visão</div></div>
+    <div class="tab"><div class="ico">●</div><div class="lbl">Decisões</div><div class="badge">3</div></div>
+    <div class="tab"><div class="ico">▦</div><div class="lbl">KPIs</div></div>
+    <div class="tab"><div class="ico">⋯</div><div class="lbl">Mais</div></div>
+  </nav>
+
+</div>
+
+<script>
+  // Theme: respeita o sistema na primeira visita, salva escolha manual
+  (function(){
+    const saved = localStorage.getItem('dl-theme');
+    const prefersLight = window.matchMedia('(prefers-color-scheme: light)').matches;
+    const theme = saved || (prefersLight ? 'light' : 'dark');
+    document.documentElement.setAttribute('data-theme', theme);
+    document.body.setAttribute('data-host', theme);
+  })();
+  function toggleTheme(){
+    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+    const next = cur === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    document.body.setAttribute('data-host', next);
+    localStorage.setItem('dl-theme', next);
+  }
+</script>
+
+</body>
+</html>
